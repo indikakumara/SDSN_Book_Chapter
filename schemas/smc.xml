@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:SMC compositeRuleFile="" dataDir="" name="" routingRuleFile="" xmlns:tns="http://www.swin.edu.au/ict/road/smc"
+         xmlns:tns1="http://www.ict.swin.edu.au/serendip/types"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.swin.edu.au/ict/road/smc smc.xsd ">
+    <ProcessDefinitions>
+        <tns1:ProcessDefinition descr="Description" id="">
+            <tns1:CoS>tns1:CoS</tns1:CoS>
+            <tns1:CoT>tns1:CoT</tns1:CoT>
+            <tns1:BehaviorTermRefs/>
+        </tns1:ProcessDefinition>
+    </ProcessDefinitions>
+    <BehaviorTerms>
+        <tns1:BehaviorTerm extends="" extension="" id="" isAbstract="false">
+            <tns1:TaskRefs/>
+            <tns1:Constraints/>
+        </tns1:BehaviorTerm>
+    </BehaviorTerms>
+    <Messages>
+        <tns1:Message contract="" id="" interactionTerm="" type=""/>
+    </Messages>
+    <Events>
+        <tns1:Event descr="" id="" isError="true" isInit="true"/>
+    </Events>
+    <Facts>
+        <Fact name="" source="">
+            <Identifier>Identifier</Identifier>
+            <Attributes>
+                <Attribute>Attribute</Attribute>
+            </Attributes>
+        </Fact>
+    </Facts>
+    <Roles>
+        <Role id="" name=""/>
+    </Roles>
+    <Contracts>
+        <Contract id="" name="" ruleFile="" type="">
+            <Types>
+                <ANY-ELEMENT/>
+            </Types>
+            <State>State</State>
+            <RoleAID>RoleAID</RoleAID>
+            <RoleBID>RoleBID</RoleBID>
+        </Contract>
+    </Contracts>
+    <PlayerBindings>
+        <PlayerBinding id="" name="">
+            <Endpoint>http://tempuri.org</Endpoint>
+        </PlayerBinding>
+    </PlayerBindings>
+    <OrganiserBinding>OrganiserBinding</OrganiserBinding>
+    <Description>Description</Description>
+    <MessageAnalyzers>
+        <tns1:MessageAnalyzer class="" id=""/>
+    </MessageAnalyzers>
+</tns:SMC>

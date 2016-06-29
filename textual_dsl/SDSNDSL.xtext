@@ -1,0 +1,183 @@
+grammar au.edu.swin.ict.sdsn.dsl.SDSNDSL with org.eclipse.xtext.common.Terminals
+
+generate sDSNDSL "http://www.edu.au/swin/ict/sdsn/dsl/SDSNDSL"
+
+Script:
+	(imports+=Import)*
+	(sn=SNDef);
+		
+Import:
+	'import' qlfdName=path 'as' name=ID ';';
+
+SNDef:
+	'ServiceNetwork' name=ID ('globalRegulation' rules=STRING)? '{'
+	(vsns+=VSNDef)*
+	(rusp+=InterProcessRegulationUnit)*
+	(rusc+=InterCollaborationRegulationUnit)*
+	(rusv+=InterVSNRegulationUnit)*
+	(cols+=CollaborationUnit)*
+	(roles+=Role)*
+	(contracts+=Contract)*
+	(organizerBinding=OrganizerBinding)?
+	(operationalManagerBinding=OperationalManagerBinding)?
+	'}';
+	
+VSNDef:
+	'VirtualServiceNetwork' name=ID '{'
+	(processes+=PdDef)*
+	(interProcessRegDesign+=InterProcessRegulationUnitRef+)?
+   '}';
+	
+PdDef:
+	'Process' name=ID '{'
+	(cos=Cos)?
+	(cot=Cot)?
+	(configDesign+=CollaborationUnitRef+)
+	(interCollRegDesign+=InterCollaborationRegulationUnitRef+)?
+	(QoS=QoS)?
+	'}';
+	
+CollaborationUnit:
+	'CollaborationUnit' name=ID ('extends' superType=[CollaborationUnit])? '{'
+	configDesign=ConfigurationDesign
+	regDesign=RegulationDesign
+	'}';
+	
+ConfigurationDesign:
+	'ConfigurationDesign' '{'
+	tasks+=TaskRef+
+	'}';
+	
+RegulationDesign:
+	'RegulationDesign'  '{'
+	 (rUnit+=RoutingUnit+)?
+	 (sUnit+=SynchronizationUnit+)?
+	 (pUnit+=PassthroughUnit+)?
+	 (gUnit+=GlobalUnit+)?
+    '}';
+	
+InterCollaborationRegulationUnit:
+	'InterCollaborationRegulationUnit' name=ID '{'
+	 (rUnit+=RoutingUnit+)?
+	 (sUnit+=SynchronizationUnit+)?
+	 (pUnit+=PassthroughUnit+)?
+	 (gUnit+=GlobalUnit+)?
+    '}';
+    
+InterProcessRegulationUnit:
+	'InterProcessRegulationUnit' name=ID '{'
+	 (rUnit+=RoutingUnit+)?
+	 (sUnit+=SynchronizationUnit+)?
+	 (pUnit+=PassthroughUnit+)?
+	 (gUnit+=GlobalUnit+)?
+    '}';
+    
+ InterVSNRegulationUnit:
+	'InterVSNRegulationUnit' name=ID '{'
+	 (rUnit+=RoutingUnit+)?
+	 (sUnit+=SynchronizationUnit+)?
+	 (pUnit+=PassthroughUnit+)?
+	 (gUnit+=GlobalUnit+)?
+    '}';
+    	
+InterProcessRegulationUnitRef:
+	'InterProcessRegulationUnitRef' parentBT=[InterProcessRegulationUnit] ';';
+		
+InterCollaborationRegulationUnitRef:
+	'InterCollaborationRegulationUnitRef' parentBT=[InterCollaborationRegulationUnit] ';';
+	
+CollaborationUnitRef:
+	'CollaborationUnitRef' parentBT=[CollaborationUnit] ';';
+
+RoutingUnit:
+	'Routing' '{'
+	 rRules+=RoutingRuleRef+
+	'}';
+	
+SynchronizationUnit:
+	'Synchronization' '{'
+	 sRules+=SynRuleRef+
+	'}';
+	
+PassthroughUnit:
+	'Passthrough' '{'
+	 pRules+=PassthroughRuleRef+
+	'}';
+	
+GlobalUnit:
+	'CoordinatedPassthrough' '{'
+	 gRules+=CoordinatedPassthroughRuleRef+
+	'}';
+
+SynRuleRef:
+	'RuleRef' role=[Role] '.'  name=ID ';';
+	
+RoutingRuleRef:
+	'RuleRef' role=[Role] '.'  name=ID ';';
+	
+PassthroughRuleRef:
+	'RuleRef' contract=[Contract] '.' name=ID ';';
+	
+CoordinatedPassthroughRuleRef:
+	'RuleRef' name=ID ';';
+	
+TaskRef:
+	'TaskRef' role=[Role] '.' name=ID '{'
+	('InitOn' eppre=STRING ';')?
+	('Triggers' eppost=STRING ';')?	
+	'}';
+	
+QoS:
+	'QoS' ('responseTime' rs=STRING )? ('throughput' th=STRING ) ';' ;
+
+TaskDef:
+	'Task' name=ID ('mep' mep=("one-way" | "solicit-response" | "request-response" | "notification"))? '{'
+	('Inputs' srcMsgs=Msgs ';')?
+	('Outputs' resultMsgs=Msgs ';')?
+	(QoS=QoS)?
+	'}';
+
+Msgs:
+	msgs+=Msg (',' msgs+=Msg)*;
+
+Msg:
+	(contractPart=[Contract]) '.' (termPart=ID) '.' (direction=("Req" | "Res")) ;
+
+Cot:
+	'CoT' value=STRING ';';
+
+Cos:
+	'CoS' value=STRING ';';
+
+Role:
+	'Role' name=ID ('name' sName=STRING)? ('synchronization' synchronization=STRING)? ('routing' routing=STRING)? '{'
+	taskDefs+=TaskDef*
+    (serviceBinding=ServiceBinding)?
+	'}';
+
+Contract:
+	'Contract' name=ID ('passthrough' ruleFileName=STRING)? '{'
+	'A is' roleA=[Role] ',' 'B is' roleB=[Role] ';'
+	terms+=ITerm*	
+	'}';
+
+ITerm:
+	'ITerm' name=ID
+	'(' params+=ParamType (',' params+=ParamType)* ')'
+	('withResponse' '(' returnParam=(ParamType) ')')?
+	'from' direction=("AtoB" | "BtoA") ';';
+	
+ParamType:
+	paramType=ID ':' paramName=ID;
+
+ServiceBinding:
+	'ServiceBinding' epr=STRING';';
+
+OrganizerBinding:
+	'OrganizerBinding' epr=STRING ';';
+
+OperationalManagerBinding:
+    'OperationalManagerBinding' epr=STRING ';';
+
+path:
+	pathValue=ID ('.' ID)*;
